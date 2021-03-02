@@ -1,0 +1,94 @@
+---
+title: "Du Bois analysis"
+author: "Nhi Hin"
+date: "2021-02-23"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(reshape2)
+library(magrittr)
+library(readr)
+library(ggplot2)
+library(LaCroixColoR)
+theme_set(theme_minimal())
+```
+
+https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-02-16/readme.md
+
+## Import data
+
+```{r}
+# Github limit exceeded
+# tuesdata <- tidytuesdayR::tt_load(2021, week = 8)
+
+# Import spreadsheets in manually
+georgia_pop <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/georgia_pop.csv')
+census <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/census.csv')
+furniture <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/furniture.csv')
+city_rural <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/city_rural.csv')
+income <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/income.csv')
+freed_slaves <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/freed_slaves.csv')
+occupation <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/occupation.csv')
+conjugal <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-16/conjugal.csv')
+
+```
+
+## Occupation
+
+```{r}
+
+occupation %<>% mutate(Percentage = case_when(
+  Group == "Negroes" ~ Percentage * -1,
+  Group == "Whites" ~ Percentage
+))
+
+ggplot(occupation, aes(x = Occupation))+
+  geom_bar(data = occupation[occupation$Group=="Negroes",],
+           aes(y = Percentage, fill = Group), stat="identity") +
+  geom_bar(data = occupation[occupation$Group=="Whites",],
+           aes(y = Percentage, fill = Group), stat="identity") +
+  geom_hline(yintercept=0, colour="white", lwd=1) +
+  theme_minimal()+
+  coord_flip(ylim=c(-100,100)) + 
+  labs(y="Percent", x="Country") +
+  ggtitle("Negroes                                                               Whites") 
+```
+
+## Conjugal Condition
+
+```{r}
+conjugal %>%
+  melt(measure.vars = c("Single", "Married", "Divorced and Widowed")) %>%
+  dplyr::rename(Conjugal_Condition = variable, 
+                Percentage = value) %>%
+  ggplot(aes(x = forcats::fct_rev(Population),
+             y = Percentage,
+             label = Percentage,
+             fill = forcats::fct_rev(Conjugal_Condition))) +
+  geom_bar(stat = "identity",
+           #show.legend = FALSE
+           ) +
+  coord_flip() +
+  facet_wrap(~Age, 
+             ncol=1, 
+             strip.position = "left") +
+  scale_fill_manual(values = c("#40644c", "#f0a800", "#d4123c" ))+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        strip.placement = 'outside',
+        rect = element_rect(fill = "transparent"),
+        legend.position = "top") +
+  labs(fill = "Conjugal Condition", 
+       y = "Percentage (%)", x = "Population") +
+  geom_text(size = 3,
+            position = position_stack(vjust = 0.5), 
+            color = "white") 
+
+  
+```
+
+
