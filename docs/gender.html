@@ -378,6 +378,9 @@ div.tocify {
 <li>
   <a href="du_bois.html">Du Bois</a>
 </li>
+<li>
+  <a href="gender.html">Bechdel Test</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -514,16 +517,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytreed1f85dcd9975998c996faba1918450d764ecf967targetblankd1f85dca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/TidyTuesday/tree/d1f85dcd9975998c996faba1918450d764ecf967" target="_blank">d1f85dc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytree4d5c8601b0b852caf4e4b1ac810d92b252b458dftargetblank4d5c860a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/TidyTuesday/tree/4d5c8601b0b852caf4e4b1ac810d92b252b458df" target="_blank">4d5c860</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytreed1f85dcd9975998c996faba1918450d764ecf967targetblankd1f85dca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytree4d5c8601b0b852caf4e4b1ac810d92b252b458dftargetblank4d5c860a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/nhihin/TidyTuesday/tree/d1f85dcd9975998c996faba1918450d764ecf967" target="_blank">d1f85dc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/nhihin/TidyTuesday/tree/4d5c8601b0b852caf4e4b1ac810d92b252b458df" target="_blank">4d5c860</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -532,6 +535,9 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -570,6 +576,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/nhihin/TidyTuesday/4d5c8601b0b852caf4e4b1ac810d92b252b458df/docs/gender.html" target="_blank">4d5c860</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-03-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -668,6 +691,43 @@ raw_bechdel &lt;- tuesdata$raw_bechdel</code></pre>
   geom_bar() +
   ggtitle(&quot;The Bechdel Test Over Time&quot;)</code></pre>
 <p><img src="figure/gender.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/TidyTuesday/blob/4d5c8601b0b852caf4e4b1ac810d92b252b458df/docs/figure/gender.Rmd/unnamed-chunk-5-1.png" target="_blank">4d5c860</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-03-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <ul>
 <li>In the FiveThirtyEight plot, they bin the years, and show the values as percentages rather than exact values. Let’s try to do this. First, we set the <code>breaks</code> accordingly.</li>
 </ul>
@@ -734,6 +794,43 @@ movies$year_bin &lt;- factor(group_tags,
                                  &quot;notalk&quot;=&quot;Women don&#39;t talk to each other&quot;,
                                  &quot;nowomen&quot;=&quot;Fewer than two women&quot;))</code></pre>
 <p><img src="figure/gender.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/nhihin/TidyTuesday/blob/4d5c8601b0b852caf4e4b1ac810d92b252b458df/docs/figure/gender.Rmd/unnamed-chunk-8-1.png" target="_blank">4d5c860</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-03-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
