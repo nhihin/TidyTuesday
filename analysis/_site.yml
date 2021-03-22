@@ -9,6 +9,8 @@ navbar:
     href: Plastics.html
   - text: Du Bois
     href: du_bois.html
+  - text: Bechdel Test
+    href: gender.html
   right:
   - icon: fa-github
     text: Source code
