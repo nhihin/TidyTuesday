@@ -426,7 +426,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-03-16
+<strong>Last updated:</strong> 2021-03-23
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -517,16 +517,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytreeb0b17f33ecc8cc608802fb88d835e03ad7504821targetblankb0b17f3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/TidyTuesday/tree/b0b17f33ecc8cc608802fb88d835e03ad7504821" target="_blank">b0b17f3</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytree66ebe88585413df6b78677a49d3ee1fbea4a2e6etargetblank66ebe88a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/nhihin/TidyTuesday/tree/66ebe88585413df6b78677a49d3ee1fbea4a2e6e" target="_blank">66ebe88</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytreeb0b17f33ecc8cc608802fb88d835e03ad7504821targetblankb0b17f3a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomnhihinTidyTuesdaytree66ebe88585413df6b78677a49d3ee1fbea4a2e6etargetblank66ebe88a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/nhihin/TidyTuesday/tree/b0b17f33ecc8cc608802fb88d835e03ad7504821" target="_blank">b0b17f3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/nhihin/TidyTuesday/tree/66ebe88585413df6b78677a49d3ee1fbea4a2e6e" target="_blank">66ebe88</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -535,9 +535,6 @@ Note that you need to be careful to ensure that all relevant files for the analy
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -576,6 +573,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/nhihin/TidyTuesday/blob/66ebe88585413df6b78677a49d3ee1fbea4a2e6e/analysis/gender.Rmd" target="_blank">66ebe88</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-03-23
+</td>
+<td>
+wflow_publish(“analysis/gender.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/nhihin/TidyTuesday/2144705bedd05d188fc8bce30fccf65f6a09e56d/docs/gender.html" target="_blank">2144705</a>
+</td>
+<td>
+Nhi Hin
+</td>
+<td>
+2021-03-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -689,8 +720,8 @@ raw_bechdel &lt;- tuesdata$raw_bechdel</code></pre>
 #   genre &lt;chr&gt;, awards &lt;chr&gt;, runtime &lt;chr&gt;, type &lt;chr&gt;, poster &lt;chr&gt;,
 #   imdb_votes &lt;dbl&gt;, error &lt;lgl&gt;</code></pre>
 </div>
-<div id="analysis" class="section level2">
-<h2>Analysis</h2>
+<div id="analysis-part-1---the-bechdel-test-over-time" class="section level2">
+<h2>Analysis Part 1 - The Bechdel Test Over Time</h2>
 <ul>
 <li>Let’s try to reproduce the following plot from the <a href="https://fivethirtyeight.com/features/the-dollar-and-cents-case-against-hollywoods-exclusion-of-women/">FiveThirtyEight article</a>.</li>
 </ul>
@@ -789,7 +820,7 @@ movies$year_bin &lt;- factor(group_tags,
 </ul>
 <pre class="r"><code>movies %&gt;%
   ggplot(aes(x=year_bin, fill = forcats::fct_rev(clean_test))) +
-  geom_bar(position = &quot;fill&quot;)+
+  geom_bar(position = &quot;fill&quot;, color = &quot;white&quot;)+
   scale_x_discrete(labels = c(&quot;[1970-1974)&quot; = &quot;1970-74&quot;,
                               &quot;[1975-1979)&quot; = &quot;&quot;,
                               &quot;[1980-1984)&quot; = &quot;1980-84&quot;, 
@@ -806,7 +837,7 @@ movies$year_bin &lt;- factor(group_tags,
           subtitle = &quot;How women are represented in movies&quot;) +
   scale_fill_manual(values = c(&quot;#ff2600&quot;, &quot;#ff937f&quot;, &quot;#ffcac0&quot;, &quot;#6ab2d5&quot;, &quot;#008fd5&quot;),
                     labels = c(&quot;ok&quot;=&quot;Passes Bechdel Test&quot;,
-                                 &quot;Dubious&quot;=&quot;Dubious&quot;,
+                                 &quot;dubious&quot;=&quot;Dubious&quot;,
                                  &quot;men&quot;=&quot;Women only talk about men&quot;,
                                  &quot;notalk&quot;=&quot;Women don&#39;t talk to each other&quot;,
                                  &quot;nowomen&quot;=&quot;Fewer than two women&quot;))</code></pre>
@@ -848,6 +879,49 @@ Nhi Hin
 </table>
 </div>
 </div>
+</div>
+<div id="analysis-part-2---median-budget-for-films" class="section level2">
+<h2>Analysis Part 2 - Median Budget for Films</h2>
+<ul>
+<li>Also trying to recreate this plot:</li>
+</ul>
+<p><img src="https://fivethirtyeight.com/wp-content/uploads/2014/04/hickey-bechdel-2.png?w=1220" /></p>
+<ul>
+<li><p>The <code>budget_2013</code> variable makes it simple as this contains dollars which have already been adjusted to be in 2013 dollars as the FiveThirtyEight plot shows.</p></li>
+<li><p>We will prepare a summarised data.frame that contains the median of <code>budget_2013</code> across all films in each category of the Bechdel Test result stored in <code>clean_test</code>.</p></li>
+</ul>
+<pre class="r"><code>movies_summary &lt;- movies %&gt;%
+  dplyr::group_by(clean_test) %&gt;%
+  dplyr::summarise(median_budget_2013 = median(budget_2013)) %&gt;%
+  dplyr::mutate(label = case_when(
+    clean_test == &quot;ok&quot; ~ &quot;Passes Bechdel Test&quot;,
+    clean_test == &quot;dubious&quot; ~ &quot;Dubious&quot;,
+    clean_test == &quot;men&quot; ~ &quot;Women only talk about men&quot;,
+    clean_test == &quot;notalk&quot; ~ &quot;Women don&#39;t talk to each other&quot;,
+    clean_test == &quot;nowomen&quot; ~ &quot;Fewer than two women&quot;
+  )) %&gt;%
+  dplyr::mutate(median_budget_2013_M = median_budget_2013 / 1e6)</code></pre>
+<ul>
+<li>The bar plot can now be plotted as follows:</li>
+</ul>
+<pre class="r"><code>movies_summary %&gt;%
+  ggplot(aes(x = median_budget_2013_M, y = label)) +
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;cornflowerblue&quot;) +
+  labs(x = &quot;millions of dollars&quot;, y = &quot;&quot;) +
+  ggtitle(&quot;Median Budget for Films Since 1990&quot;, 
+          subtitle = &quot;2013 dollars&quot;)</code></pre>
+<p><img src="figure/gender.Rmd/unnamed-chunk-10-1.png" width="1056" style="display: block; margin: auto;" /></p>
+</div>
+<div id="analysis-part-3---sankey-plot-incomplete" class="section level2">
+<h2>Analysis Part 3 - Sankey Plot (Incomplete)</h2>
+<ul>
+<li>This part of the analysis comes from Jodi, who showcased a very interesting and effective use of Sankey plots in the Slack channel.</li>
+</ul>
+<pre class="r"><code>nodes &lt;- movies$clean_test %&gt;% 
+  unique() %&gt;%
+  as.data.frame %&gt;%
+  set_colnames(&quot;name&quot;) %&gt;%
+  tibble::rowid_to_column(&quot;node&quot;)</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -871,8 +945,8 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] scales_1.1.1       ggplot2_3.3.3      magrittr_2.0.1     dplyr_1.0.4       
-[5] tidytuesdayR_1.0.1 workflowr_1.6.2   
+[1] htmlwidgets_1.5.3  networkD3_0.4      scales_1.1.1       ggplot2_3.3.3     
+[5] magrittr_2.0.1     dplyr_1.0.4        tidytuesdayR_1.0.1 workflowr_1.6.2   
 
 loaded via a namespace (and not attached):
  [1] tidyselect_1.1.0  xfun_0.21         purrr_0.3.4       colorspace_2.0-0 
@@ -889,7 +963,7 @@ loaded via a namespace (and not attached):
 [45] tibble_3.0.6      crayon_1.4.1      whisker_0.4       pkgconfig_2.0.3  
 [49] ellipsis_0.3.1    xml2_1.3.2        lubridate_1.7.9.2 assertthat_0.2.1 
 [53] rmarkdown_2.6     httr_1.4.2        rstudioapi_0.13   R6_2.5.0         
-[57] git2r_0.28.0      compiler_4.0.3   </code></pre>
+[57] igraph_1.2.6      git2r_0.28.0      compiler_4.0.3   </code></pre>
 </div>
 </div>
 
