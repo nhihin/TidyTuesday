@@ -13,6 +13,8 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(scales)
+library(networkD3)
+library(htmlwidgets)
 theme_set(theme_minimal())
 ```
 
@@ -35,7 +37,7 @@ movies
 ```
 
 
-## Analysis
+## Analysis Part 1 - The Bechdel Test Over Time
 
 - Let's try to reproduce the following plot from the [FiveThirtyEight article](https://fivethirtyeight.com/features/the-dollar-and-cents-case-against-hollywoods-exclusion-of-women/). 
 
@@ -101,7 +103,7 @@ movies$clean_test %<>% factor(levels = c("ok", "dubious", "men", "notalk", "nowo
 ```{r}
 movies %>%
   ggplot(aes(x=year_bin, fill = forcats::fct_rev(clean_test))) +
-  geom_bar(position = "fill")+
+  geom_bar(position = "fill", color = "white")+
   scale_x_discrete(labels = c("[1970-1974)" = "1970-74",
                               "[1975-1979)" = "",
                               "[1980-1984)" = "1980-84", 
@@ -118,11 +120,61 @@ movies %>%
           subtitle = "How women are represented in movies") +
   scale_fill_manual(values = c("#ff2600", "#ff937f", "#ffcac0", "#6ab2d5", "#008fd5"),
                     labels = c("ok"="Passes Bechdel Test",
-                                 "Dubious"="Dubious",
+                                 "dubious"="Dubious",
                                  "men"="Women only talk about men",
                                  "notalk"="Women don't talk to each other",
                                  "nowomen"="Fewer than two women"))
 
 ```
 
+## Analysis Part 2 - Median Budget for Films
+
+- Also trying to recreate this plot: 
+
+![](https://fivethirtyeight.com/wp-content/uploads/2014/04/hickey-bechdel-2.png?w=1220)
+
+- The `budget_2013` variable makes it simple as this contains dollars which have already been adjusted to be in 2013 dollars as the FiveThirtyEight plot shows. 
+
+- We will prepare a summarised data.frame that contains the median of `budget_2013` across all films in each category of the Bechdel Test result stored in `clean_test`. 
+
+```{r}
+movies_summary <- movies %>%
+  dplyr::group_by(clean_test) %>%
+  dplyr::summarise(median_budget_2013 = median(budget_2013)) %>%
+  dplyr::mutate(label = case_when(
+    clean_test == "ok" ~ "Passes Bechdel Test",
+    clean_test == "dubious" ~ "Dubious",
+    clean_test == "men" ~ "Women only talk about men",
+    clean_test == "notalk" ~ "Women don't talk to each other",
+    clean_test == "nowomen" ~ "Fewer than two women"
+  )) %>%
+  dplyr::mutate(median_budget_2013_M = median_budget_2013 / 1e6)
+
+```
+
+- The bar plot can now be plotted as follows:
+
+```{r fig.width=11}
+movies_summary %>%
+  ggplot(aes(x = median_budget_2013_M, y = label)) +
+  geom_bar(stat = "identity", fill = "cornflowerblue") +
+  labs(x = "millions of dollars", y = "") +
+  ggtitle("Median Budget for Films Since 1990", 
+          subtitle = "2013 dollars")
+```
+
+
+## Analysis Part 3 - Sankey Plot (Incomplete)
+
+- This part of the analysis comes from Jodi, who showcased a very interesting and effective use of Sankey plots in the Slack channel. 
+
+```{r}
+nodes <- movies$clean_test %>% 
+  unique() %>%
+  as.data.frame %>%
+  set_colnames("name") %>%
+  tibble::rowid_to_column("node")
+
+
+```
 
