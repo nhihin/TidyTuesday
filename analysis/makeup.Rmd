@@ -1,0 +1,146 @@
+---
+title: "Makeup"
+author: "Nhi Hin"
+date: "2021-03-30"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(magrittr)
+library(readr)
+library(reshape2)
+library(ggplot2)
+ggplot2::theme_set(theme_minimal())
+```
+
+
+## Links
+
+- Skin complexion makeup analysis (pudding.cool): https://pudding.cool/2021/03/foundation-names/
+
+- TidyTuesday page: https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-03-30
+
+- Data collection and preprocessing details: https://github.com/the-pudding/data/tree/master/foundation-names
+
+## Import Data
+
+```{r}
+sephora <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-30/sephora.csv')
+ulta <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-30/ulta.csv')
+allCategories <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-30/allCategories.csv')
+allShades <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-30/allShades.csv')
+allNumbers <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-03-30/allNumbers.csv')
+
+```
+
+- The `allCategories` dataset looks like this. It contains information scraped from both Ulta and Sephora. 
+
+```{r}
+allCategories %>% dplyr::select(brand, name, categories, hex, lightness) 
+```
+
+- How many brands are represented in this dataset?
+
+```{r}
+brands <- allCategories %>% 
+  dplyr::group_by(brand) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::arrange(desc(n))
+
+brands
+
+dim(brands)
+
+```
+
+- There are `r nrow(brands)` represented in this dataset. Multiple products are available for each brand. 
+
+- In terms of categories, there are also many different categories including `food`, `gem`, etc. Because of how substantial the dataset is, it might be easier if we focus on just one category for now. 
+
+```{r}
+foodSubset <- allCategories %>% dplyr::filter(categories == "food")
+dim(foodSubset)
+
+foodSubset %>% dplyr::select(brand, name, hex, lightness)
+```
+
+- Let's have a look at the most common food descriptors through counting the `name` column.
+
+```{r}
+foodSubset$name %>% 
+  table %>% 
+  as.data.frame %>% 
+  set_colnames(c("name", "n")) %>%
+  dplyr::arrange(desc(n))
+```
+
+- The descriptors `bisque`, `honey`, `almond`, `chestnut`, and `vanilla` appear the most common. Is this due to the same brands, or does it seem to be common across all brands?
+
+```{r}
+foodSubset_summary <- foodSubset %>%
+  dplyr::filter(name %in% c("bisque",
+                            "honey",
+                            "almond", 
+                            "chestnut",
+                            "vanilla"))  %>% 
+  dplyr::group_by(brand, name) %>%
+  dplyr::summarise(n = n()) %>%
+  dplyr::arrange(name, desc(n)) 
+
+foodSubset_summary
+```
+
+- Let's create a quick stacked bar chart to show the relative proportions of each brand within each of the top 5 food descriptors. 
+
+```{r}
+# Get a large number of distinct colours, see
+# https://stackoverflow.com/questions/15282580/how-to-generate-a-number-of-most-distinctive-colors-in-r
+library(RColorBrewer)
+n <- 60
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+
+foodSubset_summary %>%
+  ggplot(aes(x = name, y = n, fill = brand)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_fill_manual(values = col_vector) +
+  labs(y = "Number", x = "Food Name", fill = "Brand") +
+  ggtitle("Most popular food descriptors in foundation shades", 
+          subtitle = "Brand composition") 
+```
+
+- It might be more informative if we can actually use the Hex color code provided to show any differences / similarities in the different makeup products. 
+
+```{r fig.width=11}
+test <- foodSubset %>%
+  dplyr::filter(name %in% c("bisque",
+                            "honey",
+                            "almond", 
+                            "chestnut",
+                            "vanilla",
+                            "caramel"))  %>% 
+  split(., f=.$name) %>%
+  lapply(function(x){
+    x %>% dplyr::arrange(desc(as.numeric(lightness)))
+  }) %>%
+  dplyr::bind_rows(.id = "name") %>%
+  ggplot(aes(x = n, fill = factor(hex, levels = unique(hex)))) +
+  geom_bar(stat = "count") +
+  scale_fill_identity() +
+  facet_wrap(~factor(name, levels = c("chestnut",
+                                      "caramel", 
+                                      "almond",
+                                      "honey", 
+                                      "bisque", 
+                                      "vanilla")), nrow = 1)  +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+ 
+test
+```
+
