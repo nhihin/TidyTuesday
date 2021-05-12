@@ -1,0 +1,177 @@
+---
+title: "Network analysis of Netflix data"
+author: "Nhi Hin"
+date: "2021-04-27"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+library(dplyr)
+library(magrittr)
+library(tidyr)
+library(purrr)
+library(here)
+```
+
+
+## Background
+
+The dataset for this week's TidyTuesday relates to Netflix shows/movies and 
+their directors and cast. More info in the links below:
+
+- https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-04-20/readme.md
+- https://www.kaggle.com/shivamb/netflix-shows?select=netflix_titles.csv
+
+- From the Kaggle page, they have the following suggestions for exploring 
+the data.
+
+<blockquote>
+Inspiration
+
+Some of the interesting questions (tasks) which can be performed on this 
+dataset: 
+
+Understanding what content is available in different countries
+Identifying similar content by matching text-based features
+Network analysis of Actors / Directors and find interesting insights
+Is Netflix has increasingly focusing on TV rather than movies in recent years.
+</blockquote>
+
+- I'm going to try to explore the network analysis of actors/directors. 
+
+
+## Import Data
+
+- The data contains a range of years, but as I'm on a macbook, building a 
+network is slow with the full dataset. I am subsetting the data based on 
+the past 5 years.
+
+```{r}
+tuesdata <- tidytuesdayR::tt_load(2021, week = 17)
+
+netflix_titles <- tuesdata$netflix
+
+netflix_titles$release_year %>% unique()
+
+netflix_titles %<>%
+  dplyr::filter(release_year %in% c(2017, 2018, 2019, 2020, 2021))
+
+```
+
+- First we need to get the data into long form as follows. There is probably 
+a quicker way of doing this but it works OK for now. 
+(Edit: use `separate_rows` in future.)
+
+```{r}
+netflix_titles_long <- netflix_titles %>%
+  dplyr::select(show_id, title, director, cast)%>% 
+  dplyr::filter(!is.na(director)) %>%
+  rowwise() %>%
+  dplyr::mutate(cast = cast %>% strsplit(., split = ", ")) %>%
+  tidyr::unnest_longer(col = cast) %>%
+  ungroup()
+
+head(netflix_titles_long)
+```
+
+## Nodes and Edges Tables
+
+- From the long version of the data, we can prepare node and edge tables 
+which can then be imported into Gephi for visualisation. 
+
+- Note: `igraph` is also apparently good for network visualisation within R 
+but I have not used it yet! Will come back to try to reimplement in igraph 
+another time. 
+
+### Nodes table
+
+- The intention is to make a heterogenous/mixed network where we
+want the nodes to represent: ID of movie, director, cast. 
+This means that each of these will be a row in the nodes table. 
+
+- I will also join the movie titles on there as well in case we need them for
+visualisation purposes later. 
+
+```{r}
+nodes <- data.frame(
+  Id = c(unique(netflix_titles_long$show_id), 
+         unique(netflix_titles_long$director),
+         unique(netflix_titles_long$cast)) 
+) %>%
+  dplyr::mutate(NodeType = c(rep("Show", length(unique(netflix_titles_long$show_id))),
+                         rep("Director", length(unique(netflix_titles_long$director))),
+                         rep("Cast", length(unique(netflix_titles_long$cast)))
+                         )) %>%
+  left_join(netflix_titles_long[, c("show_id", "title")], 
+            by = c("Id"="show_id")) %>%
+  dplyr::rename(Label = title) %>%
+  dplyr::distinct(Id, Label, .keep_all=TRUE) %>%
+  dplyr::mutate(Label = gsub(x = Label, pattern = "#", replacement = "")) %>%
+  dplyr::filter(!is.na(Id))
+```
+
+
+
+### Edges Table
+
+- The edges represent connections, in this case, we will plot the following 
+edges on the network:
+
+  - show_id to director: Indicates director directed a movie
+  - show_id to cast: Indicates cast involved in a movie
+  - director to cast: Indicates director working with cast
+  
+- The structure of the edges table should include the `Source` and `Target` 
+columns for import into Gephi.
+
+```{r}
+showIdToDirector <- netflix_titles_long %>%
+  dplyr::select(show_id, director) %>%
+  dplyr::distinct(show_id, director) %>%
+  set_colnames(c("Source", "Target"))
+
+showIdToCast <- netflix_titles_long %>%
+  dplyr::select(show_id, cast) %>%
+  dplyr::distinct(show_id, cast) %>%
+  set_colnames(c("Source", "Target"))
+
+directorToCast <- netflix_titles_long %>%
+  dplyr::select(director, cast) %>%
+  dplyr::distinct(director, cast) %>%
+  set_colnames(c("Source", "Target"))
+
+edges <- bind_rows(showIdToDirector,
+                   showIdToCast,
+                   directorToCast) %>%
+  dplyr::filter(!is.na(Source), !is.na(Target))
+
+```
+
+## Export Node and Edge tables for Gephi
+
+```{r}
+nodes %>% readr::write_csv(here("output", "nodes2.csv"))
+edges %>% readr::write_csv(here("output", "edges2.csv"))
+```
+
+## Gephi Network Analysis steps
+
+- This has essentially been adapted from this tutorial: http://www.martingrandjean.ch/gephi-introduction/
+
+- Import both the nodes and edges tables into Gephi using `File > Import Spreadsheet`. 
+
+- In the importing options, I set the graph as being `undirected` and chose to merge 
+both spreadsheets into a new workspace. 
+
+- I set colours according to the `NodeType` column we made in the nodes table, and size 
+according to Degree (i.e. number of nodes that each node is connected to).
+
+- For laying out the graph, I applied "Random Layout", followed by 
+"Force Atlas 2" (initial layout), and "Yifan Hu" to increase the visual separation 
+of the nodes a bit more. 
+
+- The final result!
+
+![](assets/gephi.png)
