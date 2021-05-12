@@ -13,6 +13,8 @@ library(magrittr)
 library(readr)
 library(reshape2)
 library(ggplot2)
+library(grDevices)
+library(plotly)
 ggplot2::theme_set(theme_minimal())
 ```
 
@@ -93,6 +95,8 @@ foodSubset_summary <- foodSubset %>%
 foodSubset_summary
 ```
 
+## Variation in Makeup Shades Named After Food
+
 - Let's create a quick stacked bar chart to show the relative proportions of each brand within each of the top 5 food descriptors. 
 
 ```{r}
@@ -143,4 +147,80 @@ test <- foodSubset %>%
  
 test
 ```
+
+## Shade Similarity Exploration
+
+- An interesting idea I had was whether it's possible to pick a makeup shade similar to another one. In other words, if we can describe the different makeup shades in terms of colour code similarity, it might make it easier to see which makeup shades are essentially the same from different brands. 
+
+### Conversion of HEX Colour Code to RGB
+
+- It is possible to measure the distance between colours (Euclidean distance) from RBG but as far as I'm aware, it isn't as straightforward with Hex colour codes, which is what we've been given in the `allShades` data. 
+
+- First, we will convert Hex to RGB using the `col2rgb` function. The following will add 3 columns to `allShades` corresponding to Red, Green, and Blue. 
+
+```{r}
+allShades <- allShades %>%
+  rowwise() %>%
+  dplyr::mutate(red = col2rgb(hex)[1],
+                green = col2rgb(hex)[2],
+                blue = col2rgb(hex)[3]) 
+
+```
+
+- Let's see if we can use the RGB values to do a PCA. 
+
+```{r}
+
+pcAnalysis <- allShades %>% 
+  dplyr::select(red, green, blue) %>% 
+  prcomp()
+
+summary(pcAnalysis)
+
+# PC1 and PC2
+pcPlot <- pcAnalysis$x %>%
+  as.data.frame %>%
+  dplyr::mutate(hex = allShades$hex) %>%
+  dplyr::filter(PC2 < 150) %>% # Remove outlier sample PC2=181 which comes up as colour blue
+  ggplot(aes(x = PC1, y = PC2, color = hex)) +
+  geom_point()+
+  scale_color_identity() +
+  labs(x = "PC1 (95%)", y = "PC2 (4.4%)") +
+  ggtitle("Principal Component Analysis of All Shades") 
+
+pcPlot
+
+# PC1 and PC3
+pcPlot2 <- pcAnalysis$x %>%
+  as.data.frame %>%
+  dplyr::mutate(hex = allShades$hex) %>%
+  dplyr::filter(PC2 < 150) %>%
+  ggplot(aes(x = PC1, y = PC3, color = hex)) +
+  geom_point()+
+  scale_color_identity() +
+  labs(x = "PC1 (95%)", y = "PC3 (0.3%)") +
+  ggtitle("Principal Component Analysis of All Shades") 
+
+pcPlot2
+
+# 3D plot - not run
+# pca3d::pca3d(pcAnalysis, col = allShades$hex)
+```
+
+## Using Plotly
+
+```{r}
+dataForPlotting <- allShades %>% 
+  dplyr::select(red, green, blue) %>% 
+  bind_cols(pcAnalysis$x %>% as.data.frame) 
+  dplyr::filter(PC2 < 150)
+
+fig <- plot_ly(data = dataForPlotting,
+               x = ~PC1, y = ~PC2, z = ~PC3, 
+               color = ~hex, colors = ~hex) %>% 
+  layout(showlegend = FALSE)
+
+fig
+```
+
 
