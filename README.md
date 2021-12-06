@@ -1,6 +1,5 @@
 # TidyTuesday
 
-SAHMRI TidyTuesday analyses 
+See: https://github.com/rfordatascience/tidytuesday
 
-The analysis RMarkdowns are available in the `analysis` directory, or 
-viewable as .html files (after downloading this repository) in the `docs` directory. 
+My rendered RMarkdowns are available here: https://nhihin.com/TidyTuesday/ (or clone this repo and view `docs` directory). 
