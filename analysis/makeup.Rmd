@@ -207,20 +207,4 @@ pcPlot2
 # pca3d::pca3d(pcAnalysis, col = allShades$hex)
 ```
 
-## Using Plotly
-
-```{r}
-dataForPlotting <- allShades %>% 
-  dplyr::select(red, green, blue) %>% 
-  bind_cols(pcAnalysis$x %>% as.data.frame) 
-  dplyr::filter(PC2 < 150)
-
-fig <- plot_ly(data = dataForPlotting,
-               x = ~PC1, y = ~PC2, z = ~PC3, 
-               color = ~hex, colors = ~hex) %>% 
-  layout(showlegend = FALSE)
-
-fig
-```
-
 
